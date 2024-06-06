@@ -1,9 +1,7 @@
-goval
-=====
+# goval
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/maja42/goval)](https://goreportcard.com/report/github.com/maja42/goval)
-[![GoDoc](https://godoc.org/github.com/maja42/goval?status.svg)](https://godoc.org/github.com/maja42/goval)
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/golain-io/goval)](https://goreportcard.com/report/github.com/golain-io/goval)
+[![GoDoc](https://godoc.org/github.com/golain-io/goval?status.svg)](https://godoc.org/github.com/golain-io/goval)
 
 This library allows programs to evaluate arbitrary arithmetic/string/logic expressions.
 Accessing variables and calling custom functions is supported.
@@ -18,13 +16,12 @@ This project is licensed under the terms of the MIT license.
 A small CLI demo that evaluates expressions can be found in the example folder:
 
 ```
-go get -u github.com/maja42/goval
-cd $GOPATH/src/github.com/maja42/goval/
+go get -u github.com/golain-io/goval
+cd $GOPATH/src/github.com/golain-io/goval/
 go run example/main.go
 ```
 
 ![Demo](goval.gif)
-
 
 # Usage
 
@@ -36,6 +33,7 @@ result, err := eval.Evaluate(`42 > 21`, nil, nil) // Returns <true, nil>
 ```
 
 Accessing variables:
+
 ```go
 eval := goval.NewEvaluator()
 variables := map[string]interface{}{
@@ -44,7 +42,6 @@ variables := map[string]interface{}{
 }
 result, err := eval.Evaluate(`uploaded * 100 / total`, variables, nil)  // Returns <36, nil>
 ```
-
 
 Calling functions:
 
@@ -66,6 +63,7 @@ result, err := eval.Evaluate(`strlen(arch[:2]) + strlen("text")`, variables, fun
 ```
 
 Custom functions allow the extension with arbitrary features like regex-matching:
+
 ```go
 // Implementing regular expressions (error handling omitted)
 functions := make(map[string]goval.ExpressionFunction)
@@ -80,21 +78,19 @@ eval.Evaluate(`matches("text", "[a-z]+")`, nil, functions)  // Returns <true, ni
 eval.Evaluate(`matches("1234", "[a-z]+")`, nil, functions)  // Returns <false, nil>
 ```
 
-
-
 # Documentation
 
 ## Types
 
-This library fully supports the following types: `nil`, `bool`, `int`, `float64`, `string`, `[]interface{}` (=arrays) and `map[string]interface{}` (=objects). 
+This library fully supports the following types: `nil`, `bool`, `int`, `float64`, `string`, `[]interface{}` (=arrays) and `map[string]interface{}` (=objects).
 
 Within expressions, `int` and `float64` both have the type `number` and are completely transparent.\
 If necessary, numerical values will be automatically converted between `int` and `float64`, as long as no precision is lost.
 
 Arrays and Objects are untyped. They can store any other value ("mixed arrays").
 
-Structs are note supported to keep the functionality clear and manageable. 
-They would introduce too many edge cases and loose ends and are therefore out-of-scope. 
+Structs are note supported to keep the functionality clear and manageable.
+They would introduce too many edge cases and loose ends and are therefore out-of-scope.
 
 ## Variables
 
@@ -128,7 +124,7 @@ len("te" + "xt")
 
 ## Literals
 
-Any literal can be defined within expressions. 
+Any literal can be defined within expressions.
 String literals can be put in double-quotes `"` or back-ticks \`.
 Hex-literals start with the prefix `0x`.
 
@@ -153,7 +149,7 @@ false
 
 0xA                 // 10
 0x0A                // 10
-0xFF                // 255 
+0xFF                // 255
 0xFFFFFFFF          // 32bit appl.: -1  64bit appl.: 4294967295
 0xFFFFFFFFFFFFFFFF  // 64bit appl.: -1  32bit appl.: error
 ```
@@ -247,7 +243,6 @@ Examples:
 -varName
 ```
 
-
 ### Concatenation
 
 #### String concatenation `+`
@@ -294,7 +289,7 @@ Examples:
 #### Equals `==`, NotEquals `!=`
 
 Performs a deep-compare between the two operands.
-When comparing `int` and `float64`, 
+When comparing `int` and `float64`,
 the integer will be cast to a floating point number.
 
 #### Comparisons `<`, `>`, `<=`, `>=`
@@ -323,7 +318,6 @@ true || false && false   // true
 false && false || true   // true
 ```
 
-
 #### Not `!`
 
 Inverts the boolean on the right.
@@ -337,7 +331,6 @@ Examples:
 !varName
 ```
 
-
 ### Ternary `? :`
 
 If the expression resolves to `true`, the operator resolves to the left operand. \
@@ -348,15 +341,14 @@ Examples:
 ```
 true  ? 1 : 2                         // 1
 false ? 1 : 2                         // 2
-	
+
 2 < 5  ? "a" : 1.5                    // "a"
 9 > 12 ? "a" : [42]                   // [42]
 
 false ? (true ? 1:2) : (true ? 3:4)   // 3
 ```
 
-
-Note that all operands are resolved (no short-circuiting). 
+Note that all operands are resolved (no short-circuiting).
 In the following example, both functions are called (the return value of `func2` is simply ignored):
 
 ```
@@ -367,7 +359,7 @@ true ? func1() : func2()
 
 #### Logical Or `|`, Logical And `&`, Logical XOr `^`
 
-If one side of the operator is a floating point number, the number is cast to an integer if possible. 
+If one side of the operator is a floating point number, the number is cast to an integer if possible.
 If decimal places would be lost during that process, it is considered a type error.
 The resulting number is always an integer.
 
@@ -388,7 +380,7 @@ Examples:
 
 #### Bitwise Not `~`
 
-If performed on a floating point number, the number is cast to an integer if possible. 
+If performed on a floating point number, the number is cast to an integer if possible.
 If decimal places would be lost during that process, it is considered a type error.
 The resulting number is always an integer.
 
@@ -407,7 +399,7 @@ Examples:
 
 #### Bit-Shift `<<`, `>>`
 
-If one side of the operator is a floating point number, the number is cast to an integer if possible. 
+If one side of the operator is a floating point number, the number is cast to an integer if possible.
 If decimal places would be lost during that process, it is considered a type error.
 The resulting number is always an integer.
 
@@ -475,7 +467,6 @@ Examples:
 "Hello, 世界"[10:13]   // "界"
 ```
 
-
 #### Array Slicing `[a:b]`
 
 Slices an array and returns the given subarray.
@@ -497,31 +488,29 @@ arr[3:4]  // [3]
 
 # Alternative Libraries
 
-If you are looking for a generic evaluation library, 
+If you are looking for a generic evaluation library,
 you can also take a look at [Knetic/govaluate](https://github.com/Knetic/govaluate).
-I used that library myself, but due to a several shortcomings I decided to create goval. 
+I used that library myself, but due to a several shortcomings I decided to create goval.
 The main differences are:
 
 - More intuitive syntax
-- No intermediate AST - evaluation and parsing happens in a single step  
-- Better type support:  
-    - Full support for arrays and objects.
-    - Opaque differentiation between `int` and `float64`. \
-      The underlying type is automatically converted as long as no precision is lost.
-    - Type-aware bit-operations (they only work with `int`-numbers).
-    - No support for dates (strings are just strings, they don't have a special meaning, even if they look like dates).\
-      Support for dates and structs *could* be added if needed.
-- More operators:      
-    - Accessing variables (maps) via `.` and `[]` syntax
-    - Support for array- and object concatenation.
-    - Slicing and substrings
+- No intermediate AST - evaluation and parsing happens in a single step
+- Better type support:
+  - Full support for arrays and objects.
+  - Opaque differentiation between `int` and `float64`. \
+    The underlying type is automatically converted as long as no precision is lost.
+  - Type-aware bit-operations (they only work with `int`-numbers).
+  - No support for dates (strings are just strings, they don't have a special meaning, even if they look like dates).\
+    Support for dates and structs _could_ be added if needed.
+- More operators:
+  - Accessing variables (maps) via `.` and `[]` syntax
+  - Support for array- and object concatenation.
+  - Slicing and substrings
 - Hex-Literals (useful as soon as bit-operations are involved).
 - Array literals with `[]` as well as object literals with `{}`
 - Useful error messages.
 - Highly optimized parser code by using go/scanner and goyacc. \
-    This leads to vastly reduced code size (and therefore little bug potential)
-    and creates super-fast code.
+   This leads to vastly reduced code size (and therefore little bug potential)
+  and creates super-fast code.
 - High test coverage (including lots of special cases).\
-  Also tested on 32 and 64bit architectures, where some (documented) operations like a bitwise-not can behave differently depending on the size of `int`. 
-
-
+  Also tested on 32 and 64bit architectures, where some (documented) operations like a bitwise-not can behave differently depending on the size of `int`.
